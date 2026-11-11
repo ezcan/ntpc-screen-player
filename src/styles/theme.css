@@ -1,0 +1,222 @@
+/* Palette from the supplied reference: cream, sunshine, tangerine, rose, sky and navy.
+   All visual and per-light animation settings remain editable in this file. */
+:root {
+  color-scheme: light;
+
+  --color-background: #fff9f0;
+  --color-surface: #fffdf9;
+  --color-text: #071b3b;
+  --color-text-muted: #44556f;
+  --color-border: #7d8c9d;
+  --color-hover: #edf7ff;
+  --color-active: #d9edfc;
+  --color-focus: #155b86;
+  --color-backdrop: rgb(7 27 59 / 25%);
+  --color-error: #9b321b;
+  --color-theme-surface: rgb(212 237 255 / 85%);
+  --color-theme-border: rgb(255 255 255 / 95%);
+  --color-bokeh-gold: #ffda57;
+  --color-bokeh-orange: #ffb05b;
+  --color-bokeh-pink: #f79cc5;
+  --color-bokeh-blue: #95d9fc;
+  --color-bokeh-highlight: #fffef5;
+
+  --ambient-background:
+    radial-gradient(ellipse at 0% 0%, rgb(255 220 82 / 72%), transparent 49%),
+    radial-gradient(ellipse at 100% 0%, rgb(255 165 62 / 57%), transparent 47%),
+    radial-gradient(ellipse at 88% 106%, rgb(247 134 187 / 62%), transparent 53%),
+    radial-gradient(ellipse at 0% 95%, rgb(255 198 220 / 57%), transparent 46%),
+    var(--color-background);
+  --ambient-reading-veil: radial-gradient(ellipse at 50% 48%, rgb(255 253 247 / 94%) 0%, rgb(255 253 247 / 84%) 27%, rgb(255 253 247 / 38%) 52%, transparent 78%);
+  --unit-text-shadow: 0 2px 20px rgb(255 255 255 / 70%);
+  --theme-shadow: 0 6px 24px rgb(63 106 140 / 7%);
+
+  --highlight-color: var(--color-text);
+  --highlight-on-color: var(--color-bokeh-highlight);
+  --highlight-duration: 550ms;
+  --highlight-easing: cubic-bezier(0.22, 1, 0.36, 1);
+  --highlight-band-height: 92%;
+  --highlight-band-position: 88%;
+  --highlight-angle: 102deg;
+  --highlight-edge: 0.09em;
+  --highlight-inline-padding: 0.1em;
+  --highlight-start: 450ms;
+  --highlight-hold: 1600ms;
+  --highlight-gap: 800ms;
+  --highlight-idle: 4000ms;
+  --highlight-proximity: 80px;
+  --highlight-band: linear-gradient(var(--highlight-angle), transparent 0 var(--highlight-edge), var(--highlight-color) var(--highlight-edge) calc(100% - var(--highlight-edge)), transparent calc(100% - var(--highlight-edge)) 100%);
+
+  --font-family: sans-serif;
+  --font-weight-normal: 400;
+  --font-weight-medium: 600;
+  --font-weight-heading: 700;
+  --font-size-small: 0.875rem;
+  --font-size-body: 1rem;
+  --font-size-section: 1.0625rem;
+  --font-size-panel-title: 1.25rem;
+  --font-size-exhibition: clamp(0.875rem, min(1.5cqw, 3.5cqh), 1.75rem);
+  --font-size-slogan: clamp(1rem, min(2.3cqw, 4.5cqh), 2.75rem);
+  --font-size-meta: clamp(1rem, min(2cqw, 4cqh), 2.25rem);
+  --font-size-unit: clamp(2rem, min(8cqw, 14cqh), 10rem);
+  --font-size-theme: clamp(1.0625rem, min(3cqw, 5.5cqh), 4rem);
+  --font-size-stage-status: clamp(0.75rem, min(1.25cqw, 3cqh), 1.25rem);
+  --line-height-body: 1.5;
+  --line-height-heading: 1.2;
+  --line-height-theme: 1.5;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --stage-padding: clamp(1rem, min(4vw, 5vh), 5rem);
+  --stage-gap: clamp(0.75rem, 2cqh, 2rem);
+  --exhibit-gap: clamp(0.75rem, 2.5cqh, 2rem);
+  --exhibit-max-width: 100%;
+  --panel-width: 36rem;
+  --panel-padding: clamp(1rem, 3vw, 1.5rem);
+  --control-min-height: 2.75rem;
+  --input-number-width: 6rem;
+  --control-radius: 0.5rem;
+  --theme-radius: 1.25rem;
+  --theme-padding-y: clamp(0.5rem, 1.5cqh, 1.25rem);
+  --theme-padding-x: clamp(1rem, 3cqw, 3rem);
+  --theme-max-width: min(94%, 80rem);
+  --border-width: 1px;
+  --selected-border-width: 2px;
+  --focus-width: 2px;
+  --focus-offset: 3px;
+  --disabled-opacity: 0.45;
+  --menu-toggle-space: var(--stage-padding);
+  --stage-footer-reserved-width: 13rem;
+
+  --duration-control: 150ms;
+  --duration-exhibit: 240ms;
+  --motion-easing: ease-out;
+  --exhibit-offset: 0.5rem;
+  --z-ambient: -1;
+  --z-controls: 10;
+
+  --bokeh-radius: 50%;
+  --bokeh-size: 8vmin;
+  --bokeh-x: 0%;
+  --bokeh-duration: 12s;
+  --bokeh-delay: -3s;
+  --bokeh-drift: 2vw;
+  --bokeh-sway: -1vw;
+  --bokeh-opacity: 0.4;
+  --bokeh-blur: 4px;
+  --bokeh-color: var(--color-bokeh-gold);
+}
+
+/* Independent, deterministic light profiles. Negative delays populate the first frame. */
+.bokeh-light:nth-child(1) {
+  --bokeh-size: 10vmin; --bokeh-x: 4%; --bokeh-duration: 12s; --bokeh-delay: -4.6s;
+  --bokeh-drift: 3vw; --bokeh-sway: -1.5vw; --bokeh-opacity: 0.55; --bokeh-blur: 4px;
+  --bokeh-color: var(--color-bokeh-gold);
+}
+.bokeh-light:nth-child(2) {
+  --bokeh-size: 5vmin; --bokeh-x: 13%; --bokeh-duration: 8s; --bokeh-delay: -6.1s;
+  --bokeh-drift: -2vw; --bokeh-sway: 1vw; --bokeh-opacity: 0.44; --bokeh-blur: 2px;
+  --bokeh-color: var(--color-bokeh-orange);
+}
+.bokeh-light:nth-child(3) {
+  --bokeh-size: 13vmin; --bokeh-x: 22%; --bokeh-duration: 14s; --bokeh-delay: -1.8s;
+  --bokeh-drift: 4vw; --bokeh-sway: -1vw; --bokeh-opacity: 0.4; --bokeh-blur: 7px;
+  --bokeh-color: var(--color-bokeh-pink);
+}
+.bokeh-light:nth-child(4) {
+  --bokeh-size: 6.5vmin; --bokeh-x: 33%; --bokeh-duration: 9s; --bokeh-delay: -7s;
+  --bokeh-drift: -3vw; --bokeh-sway: 1.2vw; --bokeh-opacity: 0.36; --bokeh-blur: 3px;
+  --bokeh-color: var(--color-bokeh-gold);
+}
+.bokeh-light:nth-child(5) {
+  --bokeh-size: 8vmin; --bokeh-x: 44%; --bokeh-duration: 12s; --bokeh-delay: -3.5s;
+  --bokeh-drift: 2vw; --bokeh-sway: -1vw; --bokeh-opacity: 0.32; --bokeh-blur: 5px;
+  --bokeh-color: var(--color-bokeh-blue);
+}
+.bokeh-light:nth-child(6) {
+  --bokeh-size: 4.5vmin; --bokeh-x: 57%; --bokeh-duration: 10s; --bokeh-delay: -8.4s;
+  --bokeh-drift: -2vw; --bokeh-sway: 0.8vw; --bokeh-opacity: 0.28; --bokeh-blur: 2px;
+  --bokeh-color: var(--color-bokeh-pink);
+}
+.bokeh-light:nth-child(7) {
+  --bokeh-size: 11.5vmin; --bokeh-x: 67%; --bokeh-duration: 13s; --bokeh-delay: -5.9s;
+  --bokeh-drift: 3vw; --bokeh-sway: -1vw; --bokeh-opacity: 0.34; --bokeh-blur: 6px;
+  --bokeh-color: var(--color-bokeh-orange);
+}
+.bokeh-light:nth-child(8) {
+  --bokeh-size: 7vmin; --bokeh-x: 78%; --bokeh-duration: 7s; --bokeh-delay: -1.6s;
+  --bokeh-drift: -3vw; --bokeh-sway: 1.2vw; --bokeh-opacity: 0.48; --bokeh-blur: 3px;
+  --bokeh-color: var(--color-bokeh-blue);
+}
+.bokeh-light:nth-child(9) {
+  --bokeh-size: 13.5vmin; --bokeh-x: 91%; --bokeh-duration: 11s; --bokeh-delay: -7.3s;
+  --bokeh-drift: -4vw; --bokeh-sway: 1vw; --bokeh-opacity: 0.5; --bokeh-blur: 8px;
+  --bokeh-color: var(--color-bokeh-gold);
+}
+.bokeh-light:nth-child(10) {
+  --bokeh-size: 5.5vmin; --bokeh-x: 97%; --bokeh-duration: 14s; --bokeh-delay: -10.9s;
+  --bokeh-drift: -2vw; --bokeh-sway: -1vw; --bokeh-opacity: 0.42; --bokeh-blur: 2px;
+  --bokeh-color: var(--color-bokeh-pink);
+}
+.bokeh-light:nth-child(11) {
+  --bokeh-size: 8.5vmin; --bokeh-x: 8%; --bokeh-duration: 9s; --bokeh-delay: -1.5s;
+  --bokeh-drift: 2.5vw; --bokeh-sway: -1.2vw; --bokeh-opacity: 0.4; --bokeh-blur: 4px;
+  --bokeh-color: var(--color-bokeh-blue);
+}
+.bokeh-light:nth-child(12) {
+  --bokeh-size: 4vmin; --bokeh-x: 20%; --bokeh-duration: 12s; --bokeh-delay: -9.6s;
+  --bokeh-drift: -2vw; --bokeh-sway: 1vw; --bokeh-opacity: 0.3; --bokeh-blur: 2px;
+  --bokeh-color: var(--color-bokeh-gold);
+}
+.bokeh-light:nth-child(13) {
+  --bokeh-size: 7.5vmin; --bokeh-x: 40%; --bokeh-duration: 8s; --bokeh-delay: -4.4s;
+  --bokeh-drift: 3vw; --bokeh-sway: -0.8vw; --bokeh-opacity: 0.27; --bokeh-blur: 5px;
+  --bokeh-color: var(--color-bokeh-orange);
+}
+.bokeh-light:nth-child(14) {
+  --bokeh-size: 5.8vmin; --bokeh-x: 61%; --bokeh-duration: 13s; --bokeh-delay: -2.7s;
+  --bokeh-drift: -3vw; --bokeh-sway: 1vw; --bokeh-opacity: 0.26; --bokeh-blur: 3px;
+  --bokeh-color: var(--color-bokeh-gold);
+}
+.bokeh-light:nth-child(15) {
+  --bokeh-size: 9.5vmin; --bokeh-x: 82%; --bokeh-duration: 10s; --bokeh-delay: -5.1s;
+  --bokeh-drift: 2vw; --bokeh-sway: -1.3vw; --bokeh-opacity: 0.52; --bokeh-blur: 5px;
+  --bokeh-color: var(--color-bokeh-pink);
+}
+.bokeh-light:nth-child(16) {
+  --bokeh-size: 4.8vmin; --bokeh-x: 94%; --bokeh-duration: 7s; --bokeh-delay: -3.2s;
+  --bokeh-drift: -4vw; --bokeh-sway: 1vw; --bokeh-opacity: 0.32; --bokeh-blur: 2px;
+  --bokeh-color: var(--color-bokeh-blue);
+}
+.bokeh-light:nth-child(17) {
+  --bokeh-size: 10.8vmin; --bokeh-x: 30%; --bokeh-duration: 14s; --bokeh-delay: -12.1s;
+  --bokeh-drift: -2vw; --bokeh-sway: 0.8vw; --bokeh-opacity: 0.26; --bokeh-blur: 6px;
+  --bokeh-color: var(--color-bokeh-pink);
+}
+.bokeh-light:nth-child(18) {
+  --bokeh-size: 6.2vmin; --bokeh-x: 73%; --bokeh-duration: 11s; --bokeh-delay: -9.2s;
+  --bokeh-drift: 3vw; --bokeh-sway: -1vw; --bokeh-opacity: 0.36; --bokeh-blur: 4px;
+  --bokeh-color: var(--color-bokeh-gold);
+}
+
+@media (max-width: 600px) {
+  :root {
+    --panel-width: 100%;
+    --stage-footer-reserved-width: 0rem;
+    --menu-toggle-space: var(--space-4);
+    --highlight-proximity: 32px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-control: 0ms;
+    --duration-exhibit: 0ms;
+    --exhibit-offset: 0rem;
+    --highlight-duration: 0ms;
+  }
+}
