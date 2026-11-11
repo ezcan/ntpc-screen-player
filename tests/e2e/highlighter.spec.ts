@@ -23,6 +23,30 @@ test('cycles through exact theme words, retracting between strokes and wrapping 
   await expect(marks.nth(0)).toHaveClass(/is-highlighted/)
 })
 
+test('painted strokes finish retracting before the next stroke and remain readable', async ({ page }) => {
+  // Observe actual CSS transitions as well as classes: a fast JS loop can leave
+  // several partly painted bands even when only one mark has the active class.
+  await page.clock.resume()
+  const samples = await page.locator('.exhibit-theme').evaluate(async (element) => {
+    const result: Array<{ elapsed: number; widths: number[] }> = []
+    const start = performance.now()
+    while (performance.now() - start < 3600) {
+      result.push({
+        elapsed: performance.now() - start,
+        widths: [...element.querySelectorAll('mark')].map((mark) => {
+          const layers = getComputedStyle(mark).backgroundSize.split(',')
+          return parseFloat(layers[layers.length - 1] ?? '0')
+        }),
+      })
+      await new Promise<void>((resolve) => window.setTimeout(resolve, 100))
+    }
+    return result
+  })
+  expect(samples.every((sample) => sample.widths.filter((width) => width > 1).length <= 1)).toBe(true)
+  expect(samples.filter((sample) => (sample.widths[0] ?? 0) > 99).length).toBeGreaterThanOrEqual(5)
+  expect(samples.some((sample) => (sample.widths[1] ?? 0) > 99)).toBe(true)
+})
+
 test('mouse activity takes priority and idle near blank theme space restores the loop', async ({ page }) => {
   const theme = page.locator('.exhibit-theme')
   const marks = theme.locator('mark')

@@ -26,7 +26,7 @@ npm run preview
 
 指定展示單位範例：<https://ezcan.github.io/ntpc-screen-player/?unit=jinshan-hs>
 
-`.github/workflows/pages.yml` 會在推送到 `main` 時，自動安裝鎖定版本的套件、執行單元測試與 TypeScript 檢查、建置後發布至 GitHub Pages。也可在 GitHub 的 Actions 頁面手動執行。GitHub Pages 的發布來源使用 **GitHub Actions**。
+`.github/workflows/pages.yml` 會在推送到 `main` 時，自動安裝鎖定版本的套件、執行單元測試與 TypeScript 檢查，並以瀏覽器驗證壓縮後的正式版螢光筆效果，再建置並發布至 GitHub Pages。也可在 GitHub 的 Actions 頁面手動執行。GitHub Pages 的發布來源使用 **GitHub Actions**。
 
 發布流程使用 `npm run build -- --base=/ntpc-screen-player/`，確保專案子路徑的 JavaScript 與 CSS 網址正確；本機開發與一般靜態建置仍沿用相對路徑設定。後續修改資料或樣式後，提交並推送到 `main` 即可自動更新網站，不需手動上傳 `dist/`。
 
@@ -132,6 +132,8 @@ http://localhost:5173/?unit=beitao-jin-team&autoplay=false&interval=15
 
 劃記可在 `theme.css` 調整 `--highlight-duration`（畫筆過場）、`--highlight-hold`（含畫入的停留時間）、`--highlight-gap`（含收回的間隔）、`--highlight-start`（初始延遲）、`--highlight-idle`（滑鼠閒置時間）與 `--highlight-proximity`（附近範圍，以 px 設定）。色彩由 `--highlight-color` 與 `--highlight-on-color` 引用既有色票；色帶高度、位置及斜角也使用 `--highlight-*` 變數。計時、事件與動畫影格會在切換單位時清理。
 
+時間變數可使用 `ms` 或 `s`，程式會統一換算成毫秒；正式建置將 `1600ms` 壓縮為 `1.6s` 時，停留與間隔仍然一致。預設收回間隔為 800ms，大於 550ms 的畫筆過場，避免前後色帶重疊。
+
 保留以下覆寫入口：
 
 ```css
@@ -185,8 +187,11 @@ npm run typecheck
 npm test
 npx playwright install chromium
 npm run test:e2e
+npm run test:e2e:preview
 ```
 
 瀏覽器測試自動啟動本機 Vite，涵蓋網址還原、搜尋與循環切換、輸入保護、輪播計時、選單焦點、全螢幕、減少動態效果、背景光點暫停／恢復、主題劃記循環與滑鼠接管，以及多種螢幕尺寸的內容邊界。若要使用已安裝的 Chrome，可設定 `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` 為瀏覽器執行檔完整路徑。
+
+`test:e2e:preview` 會先正式建置，再於獨立的 4174 連接埠驗證壓縮後的 CSS 與 JavaScript，包括色帶實際畫入、完整停留及依序收回，防止只有開發模式正常的計時問題。
 
 實作參照：[Vite 靜態部署文件](https://vite.dev/guide/static-deploy.html)、[Vue Transition 文件](https://vuejs.org/guide/built-ins/transition.html)。

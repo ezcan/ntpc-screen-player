@@ -8,6 +8,7 @@ import { splitThemeHighlights } from '../../src/utils/themeSegments'
 
 let app: App | undefined
 let host: HTMLDivElement | undefined
+let styleSheet: HTMLStyleElement | undefined
 
 function mountTheme() {
   const exhibit = exhibits[0]
@@ -49,6 +50,8 @@ afterEach(() => {
   app = undefined
   host?.remove()
   host = undefined
+  styleSheet?.remove()
+  styleSheet = undefined
   vi.useRealTimers()
 })
 
@@ -78,6 +81,31 @@ describe('theme content', () => {
 })
 
 describe('automatic and pointer priority', () => {
+  it('keeps millisecond timing when production CSS is minified into seconds', async () => {
+    styleSheet = document.createElement('style')
+    styleSheet.textContent = '.exhibit-theme { --highlight-start: .45s; --highlight-hold: 1.6s; --highlight-gap: .8s; --highlight-idle: 4s; --highlight-proximity: 80px; }'
+    document.head.append(styleSheet)
+    const { paragraph, active, marks } = mountTheme()
+    await vi.advanceTimersByTimeAsync(449)
+    expect(active()).toEqual([])
+    await vi.advanceTimersByTimeAsync(1)
+    expect(active()).toEqual([marks[0]?.textContent])
+    await vi.advanceTimersByTimeAsync(1599)
+    expect(active()).toEqual([marks[0]?.textContent])
+    await vi.advanceTimersByTimeAsync(1)
+    expect(active()).toEqual([])
+    await vi.advanceTimersByTimeAsync(799)
+    expect(active()).toEqual([])
+    await vi.advanceTimersByTimeAsync(1)
+    expect(active()).toEqual([marks[1]?.textContent])
+    move(document.body, 0, 0)
+    await vi.advanceTimersByTimeAsync(16)
+    await vi.advanceTimersByTimeAsync(3999)
+    expect(paragraph.dataset.highlightMode).toBe('pointer')
+    await vi.advanceTimersByTimeAsync(1)
+    expect(paragraph.dataset.highlightMode).toBe('auto')
+  })
+
   it('cycles one word at a time, including a retract interval and wraparound', async () => {
     const { active, marks } = mountTheme()
     expect(active()).toEqual([])

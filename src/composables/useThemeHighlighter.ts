@@ -37,7 +37,11 @@ export function useThemeHighlighter(
     if (!element.value) return
     const style = getComputedStyle(element.value)
     for (const key of ['start', 'hold', 'gap', 'idle', 'proximity'] as const) {
-      const value = parseFloat(style.getPropertyValue(`--highlight-${key}`))
+      const raw = style.getPropertyValue(`--highlight-${key}`).trim().toLowerCase()
+      // Production CSS may rewrite 450ms to .45s. Normalize time before using
+      // setTimeout; proximity is a pixel distance and must keep its own unit.
+      const seconds = key !== 'proximity' && raw.endsWith('s') && !raw.endsWith('ms')
+      const value = parseFloat(raw) * (seconds ? 1000 : 1)
       if (Number.isFinite(value) && value > 0) timing[key] = value
     }
   }
