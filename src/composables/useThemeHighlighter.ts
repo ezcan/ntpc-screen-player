@@ -86,7 +86,9 @@ export function useThemeHighlighter(
 
   function scheduleIdle() {
     clearIdleTimer()
-    if (pointerNear.value || !visible.value) return
+    // Only hovering a real keyword holds the stroke. Nearby blank space must
+    // still time out, otherwise a parked mouse can suppress the loop forever.
+    if (pointerIndex.value !== null || !visible.value) return
     idleTimer = window.setTimeout(() => {
       pointerMode.value = false
       pointerIndex.value = null
@@ -105,13 +107,15 @@ export function useThemeHighlighter(
     pointerIndex.value = Number.isInteger(index) && index >= 0 && index < toValue(keywordCount) ? index : null
     if (pointerNear.value) {
       pointerMode.value = true
-      clearIdleTimer()
-    } else scheduleIdle()
+    }
+    scheduleIdle()
   }
 
   function onPointerMove(event: PointerEvent) {
     if (event.pointerType === 'touch' || toValue(options.suspended) || !visible.value) return
     pointerMode.value = true
+    // Fresh mouse activity takes priority over an earlier keyboard selection.
+    focusedIndex.value = null
     clearIdleTimer()
     lastPointer = { x: event.clientX, y: event.clientY, target: event.target }
     // Read geometry once per frame, even when a mouse sends high-frequency events.
@@ -142,13 +146,18 @@ export function useThemeHighlighter(
     else if (pointerMode.value) scheduleIdle()
   }
 
-  function focusKeyword(index: number) { focusedIndex.value = index }
+  function focusKeyword(index: number, event: FocusEvent) {
+    // A mouse click also focuses tabindex elements; it must not pin a hover
+    // stroke after the pointer leaves. Reserve persistent focus for keyboard use.
+    focusedIndex.value = event.target instanceof Element && event.target.matches(':focus-visible') ? index : null
+  }
   function blurKeyword() { focusedIndex.value = null }
 
   onMounted(() => {
     readSettings()
     mounted.value = true
     window.addEventListener('pointermove', onPointerMove, { passive: true })
+    window.addEventListener('pointerdown', onPointerMove, { passive: true })
     window.addEventListener('resize', onResize)
     window.addEventListener('blur', releasePointer)
     document.documentElement.addEventListener('pointerleave', releasePointer)
@@ -160,6 +169,7 @@ export function useThemeHighlighter(
     clearIdleTimer()
     if (pointerFrame !== undefined) window.cancelAnimationFrame(pointerFrame)
     window.removeEventListener('pointermove', onPointerMove)
+    window.removeEventListener('pointerdown', onPointerMove)
     window.removeEventListener('resize', onResize)
     window.removeEventListener('blur', releasePointer)
     document.documentElement.removeEventListener('pointerleave', releasePointer)

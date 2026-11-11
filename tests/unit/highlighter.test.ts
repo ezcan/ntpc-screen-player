@@ -91,7 +91,7 @@ describe('automatic and pointer priority', () => {
     expect(active()).toEqual([marks[0]?.textContent])
   })
 
-  it('gives hover priority, retracts on leaving a word, and waits for distance plus idle before resuming', async () => {
+  it('holds a hovered word but resumes after idle even if the pointer rests near the theme', async () => {
     const { paragraph, marks, active } = mountTheme()
     const first = marks[0]
     if (!first) throw new Error('Missing keyword')
@@ -104,12 +104,36 @@ describe('automatic and pointer priority', () => {
     move(paragraph, 95, 150)
     await vi.advanceTimersByTimeAsync(16)
     expect(active()).toEqual([])
-    await vi.advanceTimersByTimeAsync(12000)
+    await vi.advanceTimersByTimeAsync(3999)
     expect(paragraph.dataset.highlightMode).toBe('pointer')
+    await vi.advanceTimersByTimeAsync(1)
+    expect(paragraph.dataset.highlightMode).toBe('auto')
+    await vi.advanceTimersByTimeAsync(450)
+    expect(active()).toEqual([first.textContent])
     move(document.body, 0, 0)
     await vi.advanceTimersByTimeAsync(4016)
     expect(paragraph.dataset.highlightMode).toBe('auto')
     await vi.advanceTimersByTimeAsync(450)
+    expect(active()).toEqual([first.textContent])
+  })
+
+  it('lets mouse movement take over from a previously keyboard-focused keyword', async () => {
+    const { paragraph, marks, active } = mountTheme()
+    const first = marks[0]
+    const second = marks[1]
+    if (!first || !second) throw new Error('Missing keywords')
+    first.focus()
+    await nextTick()
+    expect(paragraph.dataset.highlightMode).toBe('focus')
+    move(second, 250, 150)
+    await vi.advanceTimersByTimeAsync(16)
+    expect(paragraph.dataset.highlightMode).toBe('pointer')
+    expect(active()).toEqual([second.textContent])
+    move(paragraph, 95, 150)
+    await vi.advanceTimersByTimeAsync(16)
+    expect(active()).toEqual([])
+    await vi.advanceTimersByTimeAsync(4450)
+    expect(paragraph.dataset.highlightMode).toBe('auto')
     expect(active()).toEqual([first.textContent])
   })
 

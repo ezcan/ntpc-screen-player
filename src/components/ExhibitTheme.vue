@@ -29,7 +29,7 @@ const { activeIndex, mode, focusKeyword, blurKeyword } = useThemeHighlighter(ele
       :class="{ 'is-highlighted': activeIndex === segment.index }"
       :data-keyword-index="segment.index"
       tabindex="0"
-      @focus="focusKeyword(segment.index)"
+      @focus="focusKeyword(segment.index, $event)"
       @blur="blurKeyword"
     >{{ segment.text }}</mark><template v-else>{{ segment.text }}</template></template>
   </p>
